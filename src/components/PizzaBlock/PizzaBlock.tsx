@@ -66,7 +66,6 @@ export const PizzaBlock = ({title, price, imageUrl, sizes, types}: PizzaBlockTyp
                 </button>
             </div>
         </div>
-
     );
 };
 

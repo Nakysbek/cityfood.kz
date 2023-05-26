@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Categories} from "../PizzaBlock/Categories";
 import {PizzaBlock} from "../PizzaBlock/PizzaBlock";
 import {Skeleton} from "../PizzaBlock/Skeleton";
 import {Sort} from "../PizzaBlock/Sort";
 import {Pagination} from "../Pagination/PaginationType";
+import {SearchContext} from "../../App";
 
 export type PizzaType = {
     "id": number,
@@ -26,7 +27,9 @@ export type ListType = {
     sortProperty: string
 }
 
-export const Home = ({searchValue}: {searchValue: string }) => {
+export const Home = () => {
+
+    const {searchValue}: any = useContext(SearchContext)
 
     const [items, setItems] = useState<PizzaType[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -41,7 +44,7 @@ export const Home = ({searchValue}: {searchValue: string }) => {
 
     useEffect(() => {
         setIsLoading(true)
-        fetch(`https://646e692e9c677e23218ba211.mockapi.io/items?page=${currentPage}&limit=4&category=${category}&sortBy=${sortBy}&order=desk&title=${searchBy}`)
+        fetch(`https://646e692e9c677e23218ba211.mockapi.io/items?category=${category}&title=${searchBy}&page=${currentPage}&limit=4&sortBy=${sortBy}&order=desk`)
             .then((res) => {
                 return res.json()
             })

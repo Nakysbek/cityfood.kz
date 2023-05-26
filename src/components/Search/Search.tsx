@@ -1,8 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import s from './Search.module.scss'
-import {SearchType} from "../Header";
+import {SearchContext} from "../../App";
+import {increment} from '../../redux/slices/filterSlice'
 
-export const Search = ({searchValue, setSearchValue}: SearchType) => {
+export const Search = () => {
+
+    const {searchValue, setSearchValue}: any = useContext(SearchContext)
+
     return (
         <div className={s.root}>
 
@@ -35,7 +39,8 @@ export const Search = ({searchValue, setSearchValue}: SearchType) => {
             {
                 searchValue && (
                     <svg className={s.clearIcon} onClick={() => setSearchValue('')} viewBox="0 0 48 48">
-                        <path d="M38 12.83l-2.83-2.83-11.17 11.17-11.17-11.17-2.83 2.83 11.17 11.17-11.17 11.17 2.83 2.83 11.17-11.17 11.17 11.17 2.83-2.83-11.17-11.17z"/>
+                        <path
+                            d="M38 12.83l-2.83-2.83-11.17 11.17-11.17-11.17-2.83 2.83 11.17 11.17-11.17 11.17 2.83 2.83 11.17-11.17 11.17 11.17 2.83-2.83-11.17-11.17z"/>
                         <path d="M0 0h48v48h-48z" fill="none"/>
                     </svg>
                 )

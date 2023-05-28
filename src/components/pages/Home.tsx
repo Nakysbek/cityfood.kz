@@ -1,65 +1,57 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
+import {RootState} from "../../redux/store";
+import qs from 'qs';
+import axios from "axios";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
+
 import {Categories} from "../PizzaBlock/Categories";
 import {PizzaBlock} from "../PizzaBlock/PizzaBlock";
 import {Skeleton} from "../PizzaBlock/Skeleton";
 import {Sort} from "../PizzaBlock/Sort";
 import {Pagination} from "../Pagination/PaginationType";
-import {SearchContext} from "../../App";
-
-export type PizzaType = {
-    "id": number,
-    "imageUrl": string,
-    "title": string,
-    "types": number[]
-    "sizes": number[]
-    "price": number,
-    "category": number,
-    "rating": number,
-}
-
-export type PizzaListType = {
-    pizzas: PizzaType[]
-    isLoading: boolean
-}
-
-export type ListType = {
-    name: string
-    sortProperty: string
-}
+import {setIsLoading, setItems} from "../../redux/slices/filterSlice";
 
 export const Home = () => {
 
-    const {searchValue}: any = useContext(SearchContext)
-
-    const [items, setItems] = useState<PizzaType[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(true)
-    const [categoryId, setCategoryId] = useState<number>(0)
-    const [sort, setSort] = useState<ListType>({name: 'популярности', sortProperty: 'rating'})
-    const [currentPage, setCurrentPage] = useState<number>(1)
-
-    const category = categoryId > 0 ? `${categoryId}`: '';
-    const sortBy = sort ? `${sort.sortProperty}` : '';
-    const searchBy = searchValue ? `${searchValue}` : ''
-
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const {categoryId, sort, currentPage, isLoading, searchValue, items} = useSelector((state: RootState) => state.filter)
 
     useEffect(() => {
-        setIsLoading(true)
-        fetch(`https://646e692e9c677e23218ba211.mockapi.io/items?category=${category}&title=${searchBy}&page=${currentPage}&limit=4&sortBy=${sortBy}&order=desk`)
+        dispatch(setIsLoading(true))
+
+        const category = categoryId > 0 ? `${categoryId}` : '';
+        const sortBy = sort ? `${sort.sortProperty}` : '';
+        const searchBy = searchValue ? `${searchValue}` : '';
+        const page = currentPage ? `${currentPage}` : '';
+
+        axios
+            .get(
+                `https://646e692e9c677e23218ba211.mockapi.io/items?category=${category}&title=${searchBy}&page=${page}&limit=4&sortBy=${sortBy}&order=desk`
+            )
             .then((res) => {
-                return res.json()
+                dispatch(setItems(res.data))
+                dispatch(setIsLoading(false))
             })
-            .then((res) => {
-                setItems(res)
-                setIsLoading(false)
-            })
-        window.scrollTo(0, 0)
     }, [categoryId, sort, searchValue, currentPage])
+
+    useEffect(() => {
+        const queryString = qs.stringify({
+            sort: sort.sortProperty,
+            categoryId,
+            searchValue,
+            currentPage,
+        })
+        navigate(`?${queryString}`)
+    }, [categoryId, sort, searchValue, currentPage])
+
 
     return (
         <div className="container">
             <div className="content__top">
-                <Categories categoryId={categoryId} setCategoryId={(i) => setCategoryId(i)}/>
-                <Sort sort={sort} setSort={(value) => setSort(value)}/>
+                <Categories/>
+                <Sort/>
             </div>
 
             <h2 className="content__title">Все пиццы</h2>
@@ -71,7 +63,7 @@ export const Home = () => {
                 }
             </div>
 
-            <Pagination currentPage={currentPage} setCurrentPage={(number) => setCurrentPage(number)}/>
+            <Pagination/>
 
         </div>
     );

@@ -1,11 +1,35 @@
-import React, {useContext} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import s from './Search.module.scss'
-import {SearchContext} from "../../App";
-import {increment} from '../../redux/slices/filterSlice'
+import debounce from 'lodash.debounce'
+import {RootState} from "../../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {setSearchValue} from '../../redux/slices/filterSlice'
 
 export const Search = () => {
 
-    const {searchValue, setSearchValue}: any = useContext(SearchContext)
+    const dispatch = useDispatch()
+    const inputRef = useRef()
+    const [value, setValue] = useState('')
+    const searchValue = useSelector((state: RootState) => state.filter.searchValue)
+
+    const onClickClear = () => {
+        setSearchValue('')
+        setValue('')
+        // inputRef.current позде не забудь сделать фокус
+    }
+
+    const updateSearchValue = useCallback(
+        debounce((str) => {
+            dispatch(setSearchValue(str))
+        }, 500),
+        []
+    )
+
+    const onChangeInput = (e: any) => {
+        setValue(e.target.value)
+        updateSearchValue(e.target.value)
+    }
+
 
     return (
         <div className={s.root}>
@@ -28,17 +52,15 @@ export const Search = () => {
                 </g>
             </svg>
 
-            <input value={searchValue}
-                   onChange={(e) => {
-                       setSearchValue(e.target.value)
-                   }}
+            <input value={value}
+                   onChange={(e) => onChangeInput(e)}
                    className={s.input}
                    placeholder="Поиск пиццы..."
             />
 
             {
                 searchValue && (
-                    <svg className={s.clearIcon} onClick={() => setSearchValue('')} viewBox="0 0 48 48">
+                    <svg className={s.clearIcon} onClick={onClickClear} viewBox="0 0 48 48">
                         <path
                             d="M38 12.83l-2.83-2.83-11.17 11.17-11.17-11.17-2.83 2.83 11.17 11.17-11.17 11.17 2.83 2.83 11.17-11.17 11.17 11.17 2.83-2.83-11.17-11.17z"/>
                         <path d="M0 0h48v48h-48z" fill="none"/>

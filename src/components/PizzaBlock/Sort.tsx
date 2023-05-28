@@ -1,13 +1,17 @@
 import React, {useState} from 'react';
-import {ListType} from "../pages/Home";
+import {setSort} from "../../redux/slices/filterSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../redux/store";
 
-export type SortType = {
-    sort: ListType
-    setSort: (value: ListType) => void
+interface ListType {
+    name: string
+    sortProperty: string
 }
 
-export const Sort = ({sort, setSort}: SortType) => {
+export const Sort = () => {
 
+    const dispatch = useDispatch()
+    const sort = useSelector((state: RootState) => state.filter.sort)
     const [open, setOpen] = useState(false)
 
     const lists: ListType[] = [
@@ -17,7 +21,7 @@ export const Sort = ({sort, setSort}: SortType) => {
     ]
 
     const onClickListItem = (value: ListType) => {
-        setSort(value)
+        dispatch(setSort(value))
         setOpen(!open)
     }
 

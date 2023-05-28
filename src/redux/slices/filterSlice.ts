@@ -1,35 +1,78 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import {createSlice} from '@reduxjs/toolkit'
+
+export interface SortType {
+    name: string;
+    sortProperty: string;
+}
+
+export type PizzaType = {
+    id: number,
+    imageUrl: string,
+    title: string,
+    types: number[]
+    sizes: number[]
+    price: number,
+    category: number,
+    rating: number,
+}
 
 export interface FilterState {
-    value: number
+    categoryId: number,
+    currentPage: number,
+    isLoading: boolean
+    searchValue: string,
+    sort: SortType,
+    items: PizzaType[],
 }
 
 const initialState: FilterState = {
-    value: 0,
+    categoryId: 0,
+    currentPage: 1,
+    isLoading: false,
+    searchValue: '',
+    sort: {
+        name: 'популярности',
+        sortProperty: 'rating',
+    },
+    items: [{
+        id: 0,
+        imageUrl: '',
+        title: '',
+        types: [],
+        sizes: [],
+        price: 0,
+        category: 0,
+        rating: 0,
+    }]
 }
 
 export const filterSlice = createSlice({
     name: 'filter',
     initialState,
     reducers: {
-        increment: (state) => {
-            // Redux Toolkit allows us to write "mutating" logic in reducers. It
-            // doesn't actually mutate the state because it uses the Immer library,
-            // which detects changes to a "draft state" and produces a brand new
-            // immutable state based off those changes
-            state.value += 1
+        setCategoryId(state, action) {
+            state.categoryId = action.payload
         },
-        decrement: (state) => {
-            state.value -= 1
+        setCurrentPage(state, action) {
+            state.currentPage = action.payload
         },
-        incrementByAmount: (state, action: PayloadAction<number>) => {
-            state.value += action.payload
+        setIsLoading(state, action) {
+            state.isLoading = action.payload
         },
+        setSearchValue(state, action) {
+            state.searchValue = action.payload
+        },
+        setSort(state, action) {
+            state.sort = action.payload
+        },
+        setItems(state, action) {
+            state.items = action.payload
+        }
+
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = filterSlice.actions
+export const {setCategoryId, setCurrentPage, setIsLoading, setSearchValue, setSort, setItems} = filterSlice.actions
 
 export default filterSlice.reducer

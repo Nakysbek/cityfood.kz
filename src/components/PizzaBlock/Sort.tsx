@@ -1,32 +1,35 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {setSort} from "../../redux/slices/filterSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../redux/store";
 
-interface ListType {
+interface SortListType {
     name: string
     sortProperty: string
 }
 
+export const sortList: SortListType[] = [
+    {name: 'популярности', sortProperty: 'rating'},
+    {name: 'цене', sortProperty: 'price'},
+    {name: 'алфавиту', sortProperty: 'title'}
+]
+
 export const Sort = () => {
 
     const dispatch = useDispatch()
+    const sortRef = useRef()
     const sort = useSelector((state: RootState) => state.filter.sort)
     const [open, setOpen] = useState(false)
 
-    const lists: ListType[] = [
-        {name: 'популярности', sortProperty: 'rating'},
-        {name: 'цене', sortProperty: 'price'},
-        {name: 'алфавиту', sortProperty: 'title'}
-    ]
 
-    const onClickListItem = (value: ListType) => {
+
+    const onClickListItem = (value: SortListType) => {
         dispatch(setSort(value))
         setOpen(!open)
     }
 
     return (
-        <div className="sort">
+        <div ref={sortRef.current} className="sort">
             <div className="sort__label">
                 <svg
                     width="10"
@@ -47,7 +50,7 @@ export const Sort = () => {
             <div className="sort__popup">
                 {
                     open && <ul>
-                        {lists.map((list, i) =>
+                        {sortList.map((list, i) =>
                             <li key={i}
                                 onClick={() => onClickListItem(list)}
                                 className={sort.sortProperty === list.sortProperty ? 'active' : ''}

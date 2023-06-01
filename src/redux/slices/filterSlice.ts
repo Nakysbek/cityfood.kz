@@ -25,7 +25,7 @@ export interface FilterState {
     items: PizzaType[],
 }
 
-const initialState: FilterState = {
+export const initialState: FilterState = {
     categoryId: 0,
     currentPage: 1,
     isLoading: false,
@@ -67,12 +67,17 @@ export const filterSlice = createSlice({
         },
         setItems(state, action) {
             state.items = action.payload
+        },
+        setFilters(state, action) {
+            state.currentPage = Number(action.payload.currentPage)
+            state.categoryId = Number(action.payload.categoryId)
+            state.sort = action.payload.sort
         }
 
     },
 })
 
 // Action creators are generated for each case reducer function
-export const {setCategoryId, setCurrentPage, setIsLoading, setSearchValue, setSort, setItems} = filterSlice.actions
+export const {setCategoryId, setCurrentPage, setIsLoading, setSearchValue, setSort, setItems, setFilters} = filterSlice.actions
 
 export default filterSlice.reducer

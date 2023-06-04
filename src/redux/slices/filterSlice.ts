@@ -1,6 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit'
 
-export interface SortType {
+export type SortType = {
     name: string;
     sortProperty: string;
 }
@@ -16,7 +16,7 @@ export type PizzaType = {
     rating: number,
 }
 
-export interface FilterState {
+export type FilterState = {
     categoryId: number,
     currentPage: number,
     isLoading: boolean
@@ -65,9 +65,6 @@ export const filterSlice = createSlice({
         setSort(state, action) {
             state.sort = action.payload
         },
-        setItems(state, action) {
-            state.items = action.payload
-        },
         setFilters(state, action) {
             state.currentPage = Number(action.payload.currentPage)
             state.categoryId = Number(action.payload.categoryId)
@@ -78,6 +75,6 @@ export const filterSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const {setCategoryId, setCurrentPage, setIsLoading, setSearchValue, setSort, setItems, setFilters} = filterSlice.actions
+export const {setCategoryId, setCurrentPage, setIsLoading, setSearchValue, setSort, setFilters} = filterSlice.actions
 
 export default filterSlice.reducer

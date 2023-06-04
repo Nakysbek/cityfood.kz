@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import {RootState} from "../../redux/store";
+import {RootState, store} from "../../redux/store";
 import qs from 'qs';
 import axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
@@ -10,25 +10,21 @@ import {PizzaBlock} from "../PizzaBlock/PizzaBlock";
 import {Skeleton} from "../PizzaBlock/Skeleton";
 import {Sort, sortList} from "../PizzaBlock/Sort";
 import {Pagination} from "../Pagination/PaginationType";
-import {setIsLoading, setItems, setFilters, initialState} from "../../redux/slices/filterSlice";
+import {setIsLoading, setFilters} from "../../redux/slices/filterSlice";
+import {setItems} from "../../redux/slices/pizzaSlice";
 
 export const Home = () => {
 
     const navigate = useNavigate()
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<typeof store.dispatch>()
     const isSearch = useRef(false)
     const isMounted = useRef(false)
 
-    const {
-        categoryId,
-        sort,
-        currentPage,
-        isLoading,
-        searchValue,
-        items
-    } = useSelector((state: RootState) => state.filter)
+    const {items} = useSelector((state: RootState) => state.pizza)
+    const {categoryId, sort, currentPage, isLoading, searchValue} = useSelector((state: RootState) => state.filter)
 
-    const fetchPizzas = () => {
+
+    const getPizzas = async () => {
         dispatch(setIsLoading(true))
 
         const category = categoryId > 0 ? `${categoryId}` : '';
@@ -36,14 +32,17 @@ export const Home = () => {
         const searchBy = searchValue ? `${searchValue}` : '';
         const page = currentPage ? `${currentPage}` : '';
 
-        axios
-            .get(
+        try {
+            const {data} = await axios.get(
                 `https://646e692e9c677e23218ba211.mockapi.io/items?category=${category}&title=${searchBy}&page=${page}&limit=4&sortBy=${sortBy}&order=desk`
             )
-            .then((res) => {
-                dispatch(setItems(res.data))
-                dispatch(setIsLoading(false))
-            })
+            dispatch(setItems(data))
+            // dispatch(fetchPizzas('asa'))
+        } catch (e) {
+            console.log('error: ', e)
+        } finally {
+            dispatch(setIsLoading(false))
+        }
     }
 
     // Проверка на первый рендер, если первого рендера не было то в URL-параметры ничего не вшиваем, если был
@@ -82,14 +81,11 @@ export const Home = () => {
         window.scrollTo(0, 0)
 
         if (!isSearch.current) {
-            fetchPizzas()
+            getPizzas()
         }
 
         isSearch.current = false;
     }, [categoryId, sort, searchValue, currentPage])
-
-
-
 
     return (
         <div className="container">

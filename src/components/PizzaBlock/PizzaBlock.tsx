@@ -12,7 +12,7 @@ type PizzaBlockType = {
     types: number[]
 }
 
-export const PizzaBlock = ({id, title, price, imageUrl, sizes, types}: PizzaBlockType) => {
+export const PizzaBlock = ({id, title, price, sizes, imageUrl, types}: PizzaBlockType) => {
     const dispatch = useDispatch()
     const cartItem = useSelector((state: RootState) => state.cart.items.find(obj => obj.id === id))
     const [activeType, setActiveType] = useState(0)
@@ -22,14 +22,17 @@ export const PizzaBlock = ({id, title, price, imageUrl, sizes, types}: PizzaBloc
     const addedCount = cartItem ? cartItem.count : 0;
 
     const onClickAdd = () => {
+        console.log(activeSize)
+        console.log(sizes)
         const item = {
             id,
             title,
             price,
             imageUrl,
             type: typeNames[activeType],
-            size: activeSize
+            size: sizes[activeSize]  // в корзине не отображаеттся размер пиццы
         }
+        // console.log(sizes)
         dispatch(addItem(item))
     }
 
@@ -48,6 +51,7 @@ export const PizzaBlock = ({id, title, price, imageUrl, sizes, types}: PizzaBloc
                             onClick={() => setActiveType(type)}
                             className={activeType === type ? 'active' : ''}
                         >
+                            {typeNames[type]}
                          </li>
                     )}
                 </ul>

@@ -4,7 +4,7 @@ import {Header} from "./components/Header";
 import {Home} from "./components/pages/Home";
 import {NotFound} from "./components/pages/NotFound";
 import {Route, Routes} from "react-router-dom";
-import {Cart} from "./components/pages/Cart";
+import {Cart} from "./components/pages/Cart/Cart";
 
 export function App() {
 

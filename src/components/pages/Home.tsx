@@ -3,7 +3,7 @@ import {RootState, store} from "../../redux/store";
 import qs from 'qs';
 import axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 import {Categories} from "../PizzaBlock/Categories";
 import {PizzaBlock} from "../PizzaBlock/PizzaBlock";
@@ -37,7 +37,6 @@ export const Home = () => {
                 `https://646e692e9c677e23218ba211.mockapi.io/items?category=${category}&title=${searchBy}&page=${page}&limit=4&sortBy=${sortBy}&order=desk`
             )
             dispatch(setItems(data))
-            // dispatch(fetchPizzas('asa'))
         } catch (e) {
             console.log('error: ', e)
         } finally {
@@ -87,6 +86,9 @@ export const Home = () => {
         isSearch.current = false;
     }, [categoryId, sort, searchValue, currentPage])
 
+    const pizzas = items.map((item) => <Link to={`/pizza/${item.id}`} key={item.id}><PizzaBlock  {...item}/></Link>)
+    const skeletons = [...new Array(8)].map((e, i) => <Skeleton key={i}/>)
+
     return (
         <div className="container">
             <div className="content__top">
@@ -97,10 +99,7 @@ export const Home = () => {
             <h2 className="content__title">Все пиццы</h2>
 
             <div className="content__items">
-                {isLoading
-                    ? [...new Array(8)].map((e, i) => <Skeleton key={i}/>)
-                    : items.map((item) => <PizzaBlock key={item.id} {...item}/>)
-                }
+                {isLoading ? skeletons : pizzas}
             </div>
 
             <Pagination/>
@@ -108,4 +107,5 @@ export const Home = () => {
         </div>
     );
 };
+
 

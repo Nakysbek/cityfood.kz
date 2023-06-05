@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {setSort} from "../../redux/slices/filterSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../redux/store";
@@ -18,7 +18,9 @@ export const Sort = () => {
 
     const dispatch = useDispatch()
     const sortRef = useRef()
-    const sort = useSelector((state: RootState) => state.filter.sort)
+    // export const selectFilter = (state: RootState) => state.filter
+    // const {sort} = useSelector(selectFilter) так тоже можно писать
+    const {sort} = useSelector((state: RootState) => state.filter)
     const [open, setOpen] = useState(false)
 
 
